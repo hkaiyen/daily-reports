@@ -1,167 +1,252 @@
-# 川寶每日報告 - 部署說明
+# 川寶每日報告網站 - 完整部署指南
 
-## 📋 概述
+## 📦 懶人包內容
 
-本專案用於自動發布川寶團隊的每日報告，透過 MkDocs 生成靜態網站，並部署到 Vercel 平台。
-
-## 🏗️ 技術架構
-
-- **靜態網站生成器：** MkDocs
-- **主題：** Material for MkDocs（支援繁體中文）
-- **託管平台：** Vercel
-- **部署方式：** Vercel CLI
-
-## 📁 目錄結構
-
-```
-reports_site/
-├── mkdocs.yml              # MkDocs 設定檔
-├── deploy_to_vercel.sh     # 自動部署腳本
-├── README.md               # 本說明檔案
-└── docs/
-    ├── index.md            # 首頁
-    └── reports/            # 報告存放目錄
-        ├── index.md       # 報告列表
-        └── *.md            # 各報告檔案
-```
-
-## 🚀 部署方式
-
-### 方式一：自動化部署（推薦）
-
-老闆只需提供 **Google 帳號** 給小安，小安會幫忙設定好所有東西。
-
-之後每次發布報告，只需執行：
-
-```bash
-cd ~/.openclaw/workspace/reports_site
-./deploy_to_vercel.sh
-```
-
-### 方式二：手動部署
-
-#### 步驟 1：安裝必要工具
-
-```bash
-# 安裝 MkDocs
-pip install mkdocs
-
-# 安裝 MkDocs Material 主題
-pip install mkdocs-material
-
-# 安裝繁體中文支援
-pip install mkdocs-material-snippets
-
-# 安裝 Vercel CLI
-npm install -g vercel
-```
-
-#### 步驟 2：登入 Vercel
-
-```bash
-vercel login
-```
-
-支援 Google、GitHub、Email 登入。
-
-#### 步驟 3：首次部署
-
-```bash
-cd ~/.openclaw/workspace/reports_site
-mkdocs build
-cd site
-vercel --prod
-```
-
-#### 步驟 4：日後更新
-
-每次新增報告後，執行：
-
-```bash
-cd ~/.openclaw/workspace/reports_site
-./deploy_to_vercel.sh
-```
-
-## 📝 新增報告的方式
-
-1. 在 `docs/reports/` 目錄下建立新的 `.md` 檔案
-2. 檔案命名建議：`2026-04-30-report.md`
-3. 內容格式請參考 `docs/reports/example-report.md`
-4. 執行部署腳本即可發布
-
-## ⚙️ Vercel 設定（供小安參考）
-
-### 必要設定
-
-1. **登入方式：** Google 帳號登入
-2. **專案名稱：** chuanbao-reports
-3. **建構指令：** `mkdocs build`
-4. **發布目錄：** `site/`
-5. **環境變數：** 無需設定
-
-### 網址
-
-部署成功後，Vercel 會提供一個 `.vercel.app` 網址，
-老闆可以自行設定custom domain（如有需要）。
-
-## ❓ 常見問題
-
-### Q: 忘記密碼怎麼辦？
-A: 透過 Vercel 的「忘記密碼」功能重設。
-
-### Q: 報告更新後網站沒變？
-A: 請確認已執行 `mkdocs build` 並重新部署。
-
-### Q: 可以綁定自己的網域嗎？
-A: 可以，Vercel 支援免費自訂網域，請提供網域給小安設定。
-
-## 📞 聯絡方式
-
-如有問題，請聯繫川寶團隊。
+此壓縮檔包含建立 MkDocs 靜態網站並部署到 Vercel 的完整程式碼。
 
 ---
 
-## 🔧 小安部署記錄（2026-04-30）
+## 🏠 本機資料夾結構
 
-### ✅ 已完成
-1. Git 全域帳號設定（user.name=hkaiyen, user.email=Hkaiyen@gmail.com）
-2. 確認 reports_site 資料夾存在且包含：
-   - mkdocs.yml（MkDocs 設定檔）
-   - docs/（網站內容目錄）
-   - deploy_to_vercel.sh（部署腳本）
-3. Git 初始化完成
-4. Remote origin 已設定（但尚未成功連線）
+```
+daily-reports-site/
+├── mkdocs.yml           # MkDocs 設定檔（網站名稱、主題、語言）
+├── vercel.json         # Vercel 部署設定
+├── README.md           # 本說明文件
+├── deploy_to_vercel.sh # 部署腳本（Mac/Linux）
+├── complete_deploy.sh  # 完整部署腳本
+└── docs/               # 網站內容 Markdown 檔案
+    ├── index.md        # 首頁
+    └── reports/        # 報告存放資料夾
+        ├── index.md        # 報告列表頁
+        └── example-report.md # 範例報告
+```
 
-### ❌ 無法自動完成（需要老闆操作）
-1. **建立 GitHub repository**
-   - 需要 Personal Access Token（PAT）才能透過 API 建立
-   - GitHub 已不支援密碼認證
+---
 
-2. **推送到 GitHub**
-   - 需要有效的 PAT 作為密碼
-   - 錯誤訊息：Password authentication is not supported for Git operations
+## 🚀 快速開始（從零到上線）
 
-3. **連結 GitHub 到 Vercel**
-   - 需要先有 GitHub repository 才能設定
+### Step 1：準備環境
 
-### 📝 老闆需要做的事
+**需要安裝的軟體：**
 
-#### 第一步：生成 GitHub Personal Access Token
-1. 前往 https://github.com/settings/tokens
-2. 點擊「Generate new token (classic)」
-3. 設定：
-   - Note: `vercel-deploy`
-   - 勾選 `repo` 權限（完整存取）
-   - 勾選 `read:org` 權限
-4. 點擊「Generate token」
-5. **立即複製 Token**（關閉頁面後無法再查看）
+| 軟體 | 版本 | 安裝方式 | 用途 |
+|------|------|---------|------|
+| Python | 3.8+ | python.org 或 `brew install python` | 執行 MkDocs |
+| Git | 最新 | `brew install git` 或 git-scm.com | 程式碼版本控制 |
+| MkDocs | 最新 | `pip install mkdocs-material` | 產生網站 |
+| MkDocs Material | 最新 | `pip install mkdocs-material` | 漂亮的主題 |
 
-#### 第二步：把 Token 提供給小安
-直接回覆：「我的 GitHub PAT 是：ghp_xxxxxxxxxxxx」
+**快速安裝所有需求：**
+```bash
+# 安裝 Python（如果還沒有的話）
+# macOS:
+brew install python git
 
-#### 第三步：小安會自動完成
-- 建立 GitHub repository
-- 推送程式碼
-- 連結到 Vercel
-- 回報 Vercel 網址
+# Windows: 從 python.org 下載安裝
 
+# 安裝 MkDocs 和所需套件
+pip install mkdocs mkdocs-material
+```
+
+---
+
+### Step 2：建立 GitHub 帳號（如果還沒有）
+
+1. 前往 https://github.com 註冊
+2. 記住帳號密碼
+
+---
+
+### Step 3：在 GitHub 建立 Repository
+
+1. 登入 GitHub
+2. 點右上角「+」→「New repository」
+3. 名稱填：`daily-reports`（其他保持預設）
+4. 點「Create repository」
+
+---
+
+### Step 4：Clone 並設定專案
+
+```bash
+# 在終端機執行（把 YOUR_TOKEN 和 YOUR_USERNAME 換成你的）
+
+# 建立資料夾
+mkdir -p ~/daily-reports-site
+cd ~/daily-reports-site
+
+# 初始化 Git
+git init
+
+# 設定遙端（把 YOUR_TOKEN 換成你的 GitHub Personal Access Token）
+git remote add origin https://YOUR_USERNAME:YOUR_TOKEN@github.com/YOUR_USERNAME/daily-reports.git
+
+# 設定 Git 帳號（把 YOUR_EMAIL 和 YOUR_NAME 換成你的）
+git config user.email "your@email.com"
+git config user.name "Your Name"
+```
+
+---
+
+### Step 5：複製本懶人包的檔案
+
+把 `daily-reports-site` 資料夾內所有檔案複製到本機新資料夾
+
+---
+
+### Step 6：提交到 GitHub
+
+```bash
+cd ~/daily-reports-site
+
+# 新增所有檔案
+git add .
+
+# 提交
+git commit -m "Initial commit: 川寶每日報告網站"
+
+# 推送到 GitHub
+git push -u origin main
+```
+
+---
+
+### Step 7：部署到 Vercel
+
+1. 前往 https://vercel.com
+2. 用 Google 或 GitHub 帳號登入
+3. 點「Import Git Repository」
+4. 選擇 `daily-reports` 倉庫
+5. Framework Preset：選擇 `Other`
+6. Output Directory：留空白（或填 `site`）
+7. 點「Deploy」
+
+等待 1-2 分鐘，Vercel 就會給你一個 `.vercel.app` 網址！
+
+---
+
+## 📝 如何新增報告
+
+### 方法一：手動新增 Markdown 檔案
+
+1. 在 `docs/reports/` 資料夾新增 `.md` 檔案
+2. 檔名格式：`2026-04-30-my-report.md`
+3. 內容格式：
+
+```markdown
+# 報告標題
+
+日期：2026年4月30日
+
+## 摘要
+
+這是報告內容...
+
+## 結論
+
+報告結論...
+```
+
+4. 提交到 GitHub：
+```bash
+git add docs/reports/2026-04-30-my-report.md
+git commit -m "新增：2026-04-30 報告"
+git push
+```
+
+5. Vercel 會自動偵測並重新部署（約 1-2 分鐘）
+
+---
+
+### 方法二：使用部署腳本
+
+```bash
+cd ~/daily-reports-site
+
+# 新增報告後執行
+./deploy_to_vercel.sh
+```
+
+---
+
+## ⚙️ 如何自訂網站
+
+### 修改網站名稱
+
+編輯 `mkdocs.yml`：
+```yaml
+site_name: 你的網站名稱
+site_description: 你的網站描述
+```
+
+### 修改主題顏色
+
+編輯 `mkdocs.yml`：
+```yaml
+theme:
+  palette:
+    - scheme: default
+      primary: indigo  # 改成其他顏色：red, blue, green, purple, orange
+      accent: blue
+```
+
+### 修改首頁內容
+
+編輯 `docs/index.md`
+
+---
+
+## 🌐 自訂網域（可選）
+
+1. 在 Vercel 的 Project Settings → Domains
+2. 輸入你的網域（如 `reports.yoursite.com`）
+3. 按指示設定 DNS 記錄
+4. 等待驗證（約 24-48 小時）
+
+---
+
+## 🔧 常見問題
+
+### Q：部署失敗怎麼辦？
+
+檢查錯誤訊息，常見問題：
+1. `pip install` 失敗 → 使用 `uv pip install --system`
+2. 找不到 `site/` 目錄 → 確認 `mkdocs build` 有成功執行
+
+### Q：如何確認網站更新了？
+
+在 Vercel 的 Deployments 頁面查看最新部署狀態
+
+### Q：可以不經過 GitHub 直接部署嗎？
+
+可以，但需要在本機安裝 Vercel CLI：
+```bash
+npm install -g vercel
+vercel --prod
+```
+
+---
+
+## 📞 技術規格
+
+| 項目 | 規格 |
+|------|------|
+| 靜態網站產生器 | MkDocs |
+| 主題 | Material for MkDocs |
+| 托管平台 | Vercel（免費）|
+| 資料庫 | 無（純靜態）|
+| 費用 | 免費（每月 100GB 流量以內）|
+
+---
+
+## 🎉 恭喜完成！
+
+現在你有一個全自動的每日報告網站了！
+
+只要把 Markdown 檔案放到 `docs/reports/`，提交到 GitHub，網站就會自動更新～
+
+---
+
+*最後更新：2026-04-30*
+*川寶團隊 小安製作*
