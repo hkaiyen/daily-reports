@@ -4,7 +4,7 @@ site_author: 川寶團隊
 
 theme:
   name: material
-  language: zh-Hant
+  language: zh
   palette:
     - scheme: default
       primary: indigo
@@ -37,12 +37,7 @@ nav:
     - reports/index.md
 
 plugins:
-  - search:
-      lang:
-        - zh-Hant
-        - en
-  - minify:
-      minify_html: true
+  - search
 
 markdown_extensions:
   - pymdownx.highlight:

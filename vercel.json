@@ -1,8 +1,8 @@
 {
-  "buildCommand": "uv pip install --system mkdocs mkdocs-material && mkdocs build",
+  "buildCommand": "uv pip install --system mkdocs-material && mkdocs build",
   "outputDirectory": "site",
   "framework": null,
-  "installCommand": "uv pip install --system mkdocs mkdocs-material",
+  "installCommand": "uv pip install --system mkdocs-material",
   "devCommand": "mkdocs serve",
   "regions": ["iad1"],
   "public": true
