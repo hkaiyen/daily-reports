@@ -118,3 +118,50 @@ A: 可以，Vercel 支援免費自訂網域，請提供網域給小安設定。
 ## 📞 聯絡方式
 
 如有問題，請聯繫川寶團隊。
+
+---
+
+## 🔧 小安部署記錄（2026-04-30）
+
+### ✅ 已完成
+1. Git 全域帳號設定（user.name=hkaiyen, user.email=Hkaiyen@gmail.com）
+2. 確認 reports_site 資料夾存在且包含：
+   - mkdocs.yml（MkDocs 設定檔）
+   - docs/（網站內容目錄）
+   - deploy_to_vercel.sh（部署腳本）
+3. Git 初始化完成
+4. Remote origin 已設定（但尚未成功連線）
+
+### ❌ 無法自動完成（需要老闆操作）
+1. **建立 GitHub repository**
+   - 需要 Personal Access Token（PAT）才能透過 API 建立
+   - GitHub 已不支援密碼認證
+
+2. **推送到 GitHub**
+   - 需要有效的 PAT 作為密碼
+   - 錯誤訊息：Password authentication is not supported for Git operations
+
+3. **連結 GitHub 到 Vercel**
+   - 需要先有 GitHub repository 才能設定
+
+### 📝 老闆需要做的事
+
+#### 第一步：生成 GitHub Personal Access Token
+1. 前往 https://github.com/settings/tokens
+2. 點擊「Generate new token (classic)」
+3. 設定：
+   - Note: `vercel-deploy`
+   - 勾選 `repo` 權限（完整存取）
+   - 勾選 `read:org` 權限
+4. 點擊「Generate token」
+5. **立即複製 Token**（關閉頁面後無法再查看）
+
+#### 第二步：把 Token 提供給小安
+直接回覆：「我的 GitHub PAT 是：ghp_xxxxxxxxxxxx」
+
+#### 第三步：小安會自動完成
+- 建立 GitHub repository
+- 推送程式碼
+- 連結到 Vercel
+- 回報 Vercel 網址
+
